@@ -1,9 +1,9 @@
-package io.github.vatisteve.tkbc.db.service;
+package io.github.vatisteve.tkbc.db.service.sp;
 
 import io.github.vatisteve.tkbc.db.generic.Statistic;
 import io.github.vatisteve.tkbc.db.generic.ThongKeExecutor;
 import io.github.vatisteve.tkbc.db.model.ThongKeDto;
-import lombok.Value;
+import io.github.vatisteve.tkbc.db.model.ThongKeParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 
@@ -17,30 +17,30 @@ import java.util.List;
  * @author tinhnv - Jan 19 2025
  */
 @Slf4j
-public abstract class StoredProcedureThongKeExecutor<I extends Serializable> implements ThongKeExecutor<I> {
+public class StoredProcedureThongKeExecutor implements ThongKeExecutor {
 
     private final String procedureName;
     private final EntityManager entityManager;
 
-    protected StoredProcedureThongKeExecutor(String procedureName, EntityManager entityManager) {
+    public StoredProcedureThongKeExecutor(String procedureName, EntityManager entityManager) {
         Validate.notEmpty(procedureName, "procedureName must not be empty");
         Validate.notNull(entityManager, "entityManager must not be null");
         this.procedureName = procedureName;
         this.entityManager = entityManager;
     }
 
-    private StoredProcedureQuery createStoredProcedureQuery(List<StoredProcedureParameterIn<?>> parameters) {
+    private <P extends ThongKeParameter> StoredProcedureQuery createStoredProcedureQuery(List<P> parameters) {
         StoredProcedureQuery sp = entityManager.createStoredProcedureQuery(procedureName);
         parameters.forEach(param -> {
             log.trace("Set Stored Procedure parameter [{}], with value [{}]", param.getName(), param.getValue());
-            sp.registerStoredProcedureParameter(param.name, param.value.getClass(), ParameterMode.IN);
-            sp.setParameter(param.name, param.value);
+            sp.registerStoredProcedureParameter(param.getName(), param.getType(), ParameterMode.IN);
+            sp.setParameter(param.getName(), param.getValue());
         });
         return sp;
     }
 
     @Override
-    public <R extends ThongKeDto<I>> void execute(R cursor, List<StoredProcedureParameterIn<?>> parameters) {
+    public <I extends Serializable, R extends ThongKeDto<I>, P extends ThongKeParameter> void execute(R cursor, List<P> parameters) {
         Validate.notNull(parameters, "parameters must not be null");
         Validate.notNull(cursor, "cursor must not be null");
         Validate.notNull(cursor.getStatistics(), "cursor statistics must not be null");
@@ -60,12 +60,6 @@ public abstract class StoredProcedureThongKeExecutor<I extends Serializable> imp
         } else {
             log.error("Execute store procedure [{}] failed", procedureName);
         }
-    }
-
-    @Value
-    public static class StoredProcedureParameterIn<T> {
-        String name;
-        T value;
     }
 
 }
