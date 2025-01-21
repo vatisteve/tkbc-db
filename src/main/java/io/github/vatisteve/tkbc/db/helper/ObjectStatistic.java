@@ -2,6 +2,7 @@ package io.github.vatisteve.tkbc.db.helper;
 
 import io.github.vatisteve.tkbc.db.generic.Statistic;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.logging.Level;
 
@@ -9,6 +10,7 @@ import java.util.logging.Level;
  * @author tinhnv - Jan 19 2025
  */
 @Data
+@Slf4j
 public class ObjectStatistic implements Statistic<Object> {
 
     private Object value;
@@ -19,8 +21,8 @@ public class ObjectStatistic implements Statistic<Object> {
     }
 
     @Override
-    public void sumNext(Statistic<?> other) {
-        log.log(Level.INFO, "Object Statistic does not support sumNext operation");
+    public void sumNext(Statistic<Object> other) {
+        log.warn("Object Statistic does not support sumNext operation");
     }
 
 }

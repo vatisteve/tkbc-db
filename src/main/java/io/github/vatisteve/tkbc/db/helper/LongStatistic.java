@@ -1,12 +1,12 @@
 package io.github.vatisteve.tkbc.db.helper;
 
 import io.github.vatisteve.tkbc.db.generic.Statistic;
-
-import java.util.logging.Level;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author tinhnv - Jan 19 2025
  */
+@Slf4j
 public class LongStatistic implements Statistic<Long> {
 
     private long value;
@@ -22,21 +22,19 @@ public class LongStatistic implements Statistic<Long> {
     }
 
     @Override
-    public void sumNext(Statistic<?> other) {
-        Object otherValue = other.getValue();
-        if (otherValue instanceof Long) {
-            value += (Long) otherValue;
-        } else {
-            log.log(Level.WARNING, () -> otherValue + " is not a Long");
-        }
+    public void sumNext(Statistic<Long> other) {
+        long otherValue = other.getValue() == null ? 0L : other.getValue();
+        value += otherValue;
     }
 
     @Override
     public void setValue(Object value) {
-        if (value instanceof Long) {
-            this.value = (Long) value;
+        if (value instanceof Number) {
+            this.value = ((Number) value).longValue();
+        } else if (value instanceof String) {
+            this.value = Long.parseLong((String) value);
         } else {
-            log.log(Level.WARNING, () -> value + " is not a Long");
+            log.warn("{} cannot be assigned to Long", value);
         }
     }
 

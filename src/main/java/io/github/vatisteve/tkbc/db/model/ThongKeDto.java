@@ -3,6 +3,7 @@ package io.github.vatisteve.tkbc.db.model;
 import io.github.vatisteve.tkbc.db.generic.ModelInfo;
 import io.github.vatisteve.tkbc.db.generic.Statistic;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
  * @since Jan 11, 2024
  */
 @Data
+@EqualsAndHashCode(callSuper = false, of = {"model","statistics"})
 public class ThongKeDto<I extends Serializable> {
 
     private final ModelInfo<I> model;
@@ -33,12 +35,13 @@ public class ThongKeDto<I extends Serializable> {
         sum(this.statistics, child.statistics);
     }
 
-    public static void sum(List<Statistic<?>> parentStatistics, List<Statistic<?>> childStatistics) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T extends Statistic<?>> void sum(List<T> parentStatistics, List<T> childStatistics) {
         if (parentStatistics.isEmpty()) {
             parentStatistics.addAll(childStatistics);
         } else {
             for (int i = 0; i < childStatistics.size(); i++) {
-                parentStatistics.get(i).sumNext(childStatistics.get(i));
+                parentStatistics.get(i).sumNext((Statistic) childStatistics.get(i));
             }
         }
     }
