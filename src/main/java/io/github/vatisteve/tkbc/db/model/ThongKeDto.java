@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author tinhnv
@@ -33,6 +34,12 @@ public class ThongKeDto<I extends Serializable> {
     public void addChild(ThongKeDto<I> child) {
         children.add(child);
         sum(this.statistics, child.statistics);
+    }
+
+    public <T extends Statistic<?>> void fillStatistics(Supplier<T> supplier, int size) {
+        for (int i = 0; i < size; i++) {
+            statistics.add(supplier.get());
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

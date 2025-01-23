@@ -4,6 +4,7 @@ import io.github.vatisteve.tkbc.db.generic.Statistic;
 import io.github.vatisteve.tkbc.db.generic.ThongKeExecutor;
 import io.github.vatisteve.tkbc.db.model.ThongKeDto;
 import io.github.vatisteve.tkbc.db.model.ThongKeParameter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 
@@ -11,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureQuery;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,21 +46,84 @@ public class StoredProcedureThongKeExecutor implements ThongKeExecutor {
         Validate.notNull(parameters, "parameters must not be null");
         Validate.notNull(cursor, "cursor must not be null");
         Validate.notNull(cursor.getStatistics(), "cursor statistics must not be null");
+        List<StatisticGroup> groups = splitStatisticsType(cursor.getStatistics());
         StoredProcedureQuery sp = createStoredProcedureQuery(parameters);
-        if (sp.execute()) {
-            List<?> queriedStatistics = sp.getResultList();
-            List<Statistic<?>> registeredStatistics = cursor.getStatistics();
-            if (queriedStatistics.size() != registeredStatistics.size()) {
-                log.warn("Queried statistics data is not the same size as the registered one [{}/{}]", queriedStatistics.size(), registeredStatistics.size());
+        if (sp.execute()) getResult(groups, sp);
+        else log.error("Execute store procedure [{}] failed", procedureName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void getResult(List<StatisticGroup> groups, StoredProcedureQuery sp) {
+        for (StatisticGroup group : groups) {
+            List<Statistic<?>> registeredStatistics = group.getStatistics();
+            if (group.useMapper) {
+                List<Object[]> queriedStatistics = sp.getResultList();
+                checkStatisticSizeAndLogWarning(group, queriedStatistics, registeredStatistics);
+                for (int i = 0; i < registeredStatistics.size(); i++) {
+                    Statistic<?> stat = registeredStatistics.get(i);
+                    Object[] values = queriedStatistics.get(i);
+                    log.trace("Registered statistics index [{}] set value with [{}] fields", i, values.length);
+                    stat.useResultMapper().accept(values);
+                }
+            } else {
+                List<?> queriedStatistics = sp.getResultList();
+                checkStatisticSizeAndLogWarning(group, queriedStatistics, registeredStatistics);
+                for (int i = 0; i < registeredStatistics.size(); i++) {
+                    Statistic<?> stat = registeredStatistics.get(i);
+                    Object value = queriedStatistics.get(i);
+                    log.trace("Registered statistics index [{}] set value [{}] with type [{}]", i, value, stat.getType());
+                    stat.setValue(value);
+                }
             }
-            for (int i = 0; i < registeredStatistics.size(); i++) {
-                Statistic<?> stat = registeredStatistics.get(i);
-                Object value = queriedStatistics.get(i);
-                log.trace("Registered statistics index [{}] set value [{}] with type [{}]", i, value, stat.getType());
-                stat.setValue(value);
+            if (!sp.hasMoreResults() && groups.size() > 1) {
+                log.error("There is only one result set! Remaining {} statistics group(s) will be omitted", groups.size() - 1);
+                break;
             }
-        } else {
-            log.error("Execute store procedure [{}] failed", procedureName);
+        }
+    }
+
+    private static void checkStatisticSizeAndLogWarning(StatisticGroup group, List<?> queriedStatistics, List<Statistic<?>> registeredStatistics) {
+        if (queriedStatistics.size() > registeredStatistics.size()) {
+            log.warn("The queried statistics data result size is greater than the registered one [{}/{}] - Query group [{}] ",
+                    queriedStatistics.size(), registeredStatistics.size(), group.getType());
+        } else if (queriedStatistics.size() < registeredStatistics.size()) {
+            log.error("The queried statistics data result size is less than the registered one [{}/{}] - Query group [{}]",
+                    queriedStatistics.size(), registeredStatistics.size(), group.getType());
+        }
+    }
+
+    private List<StatisticGroup> splitStatisticsType(List<Statistic<?>> statistics) {
+        List<StatisticGroup> groups = new ArrayList<>();
+        if (statistics.isEmpty()) return groups;
+        Statistic<?> first = statistics.get(0);
+        StatisticGroup group = new StatisticGroup(first);
+        group.add(first);
+        for (int i = 1; i < statistics.size(); i++) {
+            Statistic<?> current = statistics.get(i);
+            Statistic<?> previous = statistics.get(i - 1);
+            if (current.getType().equals(previous.getType())) {
+                group.getStatistics().add(current);
+            } else {
+                groups.add(group);
+                group = new StatisticGroup(current);
+                group.add(current);
+            }
+        }
+        groups.add(group);
+        return groups;
+    }
+
+    @Value
+    private static class StatisticGroup {
+        Class<?> type;
+        boolean useMapper;
+        List<Statistic<?>> statistics = new ArrayList<>();
+        public StatisticGroup(Statistic<?> statistic) {
+            this.type = statistic.getType();
+            this.useMapper = statistic.useResultMapper() != null;
+        }
+        public void add(Statistic<?> statistic) {
+            statistics.add(statistic);
         }
     }
 
