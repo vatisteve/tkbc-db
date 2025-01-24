@@ -40,4 +40,9 @@ public class DoubleStatistic implements Statistic<Double> {
         }
     }
 
+    @Override
+    public Statistic<Double> newInstance() {
+        return new DoubleStatistic();
+    }
+
 }

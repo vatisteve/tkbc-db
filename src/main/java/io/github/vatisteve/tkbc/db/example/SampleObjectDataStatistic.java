@@ -68,5 +68,10 @@ public class SampleObjectDataStatistic implements Statistic<Value> {
             }
         };
     }
-    
+
+    @Override
+    public Statistic<Value> newInstance() {
+        return new SampleObjectDataStatistic();
+    }
+
 }

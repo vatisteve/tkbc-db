@@ -15,7 +15,7 @@ import java.time.*;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class InstantStaticalQuery implements StatisticalRequest<Instant, Instant> {
+public class InstantStatisticalRequest implements StatisticalRequest<Instant, Instant> {
 
     private StatisticType statisticType;
     private Instant startDate;

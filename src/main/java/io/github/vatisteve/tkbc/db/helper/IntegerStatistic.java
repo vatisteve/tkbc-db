@@ -37,4 +37,10 @@ public class IntegerStatistic implements Statistic<Integer> {
             log.warn("{} cannot be assigned to Integer", value);
         }
     }
+
+    @Override
+    public Statistic<Integer> newInstance() {
+        return new IntegerStatistic();
+    }
+
 }

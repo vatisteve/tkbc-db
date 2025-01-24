@@ -51,4 +51,9 @@ public class SampleArrayListDataStatistic implements Statistic<Value> {
         };
     }
 
+    @Override
+    public Statistic<Value> newInstance() {
+        return new SampleArrayListDataStatistic();
+    }
+
 }

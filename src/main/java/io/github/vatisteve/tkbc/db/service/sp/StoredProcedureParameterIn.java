@@ -1,11 +1,11 @@
 package io.github.vatisteve.tkbc.db.service.sp;
 
-import io.github.vatisteve.tkbc.db.model.ThongKeParameter;
+import io.github.vatisteve.tkbc.db.model.StatisticParameter;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 
 @Getter
-public class StoredProcedureParameterIn<T> implements ThongKeParameter {
+public class StoredProcedureParameterIn<T> implements StatisticParameter {
 
     private final String name;
     private final T value;

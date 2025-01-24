@@ -18,4 +18,5 @@ public interface Statistic<T> {
     default Consumer<Object[]> useResultMapper() {
         return null;
     }
+    Statistic<T> newInstance();
 }

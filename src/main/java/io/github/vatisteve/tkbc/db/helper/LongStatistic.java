@@ -38,4 +38,9 @@ public class LongStatistic implements Statistic<Long> {
         }
     }
 
+    @Override
+    public Statistic<Long> newInstance() {
+        return new LongStatistic();
+    }
+
 }

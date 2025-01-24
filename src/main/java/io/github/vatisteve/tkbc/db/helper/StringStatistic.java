@@ -33,4 +33,9 @@ public class StringStatistic implements Statistic<String> {
         }
     }
 
+    @Override
+    public Statistic<String> newInstance() {
+        return new StringStatistic();
+    }
+
 }

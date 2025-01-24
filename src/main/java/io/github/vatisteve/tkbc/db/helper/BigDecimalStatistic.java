@@ -42,4 +42,10 @@ public class BigDecimalStatistic implements Statistic<BigDecimal> {
             log.warn("{} cannot be assigned to BigDecimal", value);
         }
     }
+
+    @Override
+    public Statistic<BigDecimal> newInstance() {
+        return new BigDecimalStatistic();
+    }
+
 }

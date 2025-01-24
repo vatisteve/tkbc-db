@@ -25,4 +25,9 @@ public class ObjectStatistic implements Statistic<Object> {
         log.warn("Object Statistic does not support sumNext operation");
     }
 
+    @Override
+    public Statistic<Object> newInstance() {
+        return new ObjectStatistic();
+    }
+
 }

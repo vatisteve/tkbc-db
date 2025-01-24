@@ -16,13 +16,13 @@ import java.util.function.Supplier;
  */
 @Data
 @EqualsAndHashCode(callSuper = false, of = {"model","statistics"})
-public class ThongKeDto<I extends Serializable> {
+public class StatisticDto<I extends Serializable> {
 
     private final ModelInfo<I> model;
     private final List<Statistic<?>> statistics;
-    private List<ThongKeDto<I>> children = new ArrayList<>();
+    private List<StatisticDto<I>> children = new ArrayList<>();
 
-    public ThongKeDto(ModelInfo<I> model) {
+    public StatisticDto(ModelInfo<I> model) {
         this.model = model;
         this.statistics = new ArrayList<>();
     }
@@ -31,9 +31,13 @@ public class ThongKeDto<I extends Serializable> {
         this.statistics.add(statistic);
     }
 
-    public void addChild(ThongKeDto<I> child) {
+    public void addChild(StatisticDto<I> child) {
         children.add(child);
-        sum(this.statistics, child.statistics);
+        sumNextStatistics(child.statistics);
+    }
+
+    public void sumNextStatistics(List<Statistic<?>> children) {
+        sum(this.statistics, children);
     }
 
     public <T extends Statistic<?>> void fillStatistics(Supplier<T> supplier, int size) {
@@ -43,18 +47,17 @@ public class ThongKeDto<I extends Serializable> {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <T extends Statistic<?>> void sum(List<T> parentStatistics, List<T> childStatistics) {
-        if (parentStatistics.isEmpty()) {
-            parentStatistics.addAll(childStatistics);
-        } else {
-            for (int i = 0; i < childStatistics.size(); i++) {
-                parentStatistics.get(i).sumNext((Statistic) childStatistics.get(i));
-            }
+    public static <T extends Statistic<?>> void sum(List<T> parents, List<T> children) {
+        if (parents.isEmpty()) {
+            children.forEach(c -> parents.add((T) c.newInstance()));
+        }
+        for (int i = 0; i < parents.size(); i++) {
+            parents.get(i).sumNext((Statistic) children.get(i));
         }
     }
 
-    public static <I extends Serializable> ThongKeDto<I> of(ModelInfo<I> model, List<ThongKeDto<I>> children) {
-        ThongKeDto<I> result = new ThongKeDto<>(model);
+    public static <I extends Serializable> StatisticDto<I> of(ModelInfo<I> model, List<StatisticDto<I>> children) {
+        StatisticDto<I> result = new StatisticDto<>(model);
         children.forEach(c -> sum(result.statistics, c.statistics));
         return result;
     }

@@ -42,4 +42,9 @@ public class TriStateStatistic implements Statistic<Boolean> {
         }
     }
 
+    @Override
+    public Statistic<Boolean> newInstance() {
+        return new TriStateStatistic();
+    }
+
 }

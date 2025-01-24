@@ -1,9 +1,9 @@
 package io.github.vatisteve.tkbc.db.service.sp;
 
 import io.github.vatisteve.tkbc.db.generic.Statistic;
-import io.github.vatisteve.tkbc.db.generic.ThongKeExecutor;
-import io.github.vatisteve.tkbc.db.model.ThongKeDto;
-import io.github.vatisteve.tkbc.db.model.ThongKeParameter;
+import io.github.vatisteve.tkbc.db.generic.StatisticExecutor;
+import io.github.vatisteve.tkbc.db.model.StatisticDto;
+import io.github.vatisteve.tkbc.db.model.StatisticParameter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
@@ -19,19 +19,19 @@ import java.util.List;
  * @author tinhnv - Jan 19 2025
  */
 @Slf4j
-public class StoredProcedureThongKeExecutor implements ThongKeExecutor {
+public class StoredProcedureStatisticExecutor implements StatisticExecutor {
 
     private final String procedureName;
     private final EntityManager entityManager;
 
-    public StoredProcedureThongKeExecutor(String procedureName, EntityManager entityManager) {
+    public StoredProcedureStatisticExecutor(String procedureName, EntityManager entityManager) {
         Validate.notEmpty(procedureName, "procedureName must not be empty");
         Validate.notNull(entityManager, "entityManager must not be null");
         this.procedureName = procedureName;
         this.entityManager = entityManager;
     }
 
-    private <P extends ThongKeParameter> StoredProcedureQuery createStoredProcedureQuery(List<P> parameters) {
+    private <P extends StatisticParameter> StoredProcedureQuery createStoredProcedureQuery(List<P> parameters) {
         StoredProcedureQuery sp = entityManager.createStoredProcedureQuery(procedureName);
         parameters.forEach(param -> {
             log.trace("Set Stored Procedure parameter [{}], with value [{}]", param.getName(), param.getValue());
@@ -42,7 +42,7 @@ public class StoredProcedureThongKeExecutor implements ThongKeExecutor {
     }
 
     @Override
-    public <I extends Serializable, R extends ThongKeDto<I>, P extends ThongKeParameter> void execute(R cursor, List<P> parameters) {
+    public <I extends Serializable, R extends StatisticDto<I>, P extends StatisticParameter> void execute(R cursor, List<P> parameters) {
         Validate.notNull(parameters, "parameters must not be null");
         Validate.notNull(cursor, "cursor must not be null");
         Validate.notNull(cursor.getStatistics(), "cursor statistics must not be null");

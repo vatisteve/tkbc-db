@@ -10,21 +10,21 @@ import java.util.stream.Collectors;
 /**
  * @author tinhnv - Jan 19 2025
  */
-public interface ThongKeResponse {
+public interface StatisticResponseWrapper {
 
-    class ThongKeResponseImpl<I extends Serializable, T extends ThongKeDto<I>> extends ArrayList<T> implements ThongKeResponse {
+    class StatisticResponseWrapperImpl<I extends Serializable, T extends StatisticDto<I>> extends ArrayList<T> implements StatisticResponseWrapper {
 
         private static final long serialVersionUID = 1L;
 
-        public static <I extends Serializable, T extends ThongKeDto<I>> ThongKeResponseImpl<I, T> of(Collection<T> statisticData) {
-            ThongKeResponseImpl<I, T> tk = new ThongKeResponseImpl<>();
+        public static <I extends Serializable, T extends StatisticDto<I>> StatisticResponseWrapperImpl<I, T> of(Collection<T> statisticData) {
+            StatisticResponseWrapperImpl<I, T> tk = new StatisticResponseWrapperImpl<>();
             tk.addAll(statisticData);
             return tk;
         }
 
     }
 
-    static <I extends Serializable, T extends ThongKeDto<I>, R extends ThongKeResponseImpl<I, T>> Collector<T, ?, R> collectFor(Supplier<R> supplier) {
+    static <I extends Serializable, T extends StatisticDto<I>, R extends StatisticResponseWrapperImpl<I, T>> Collector<T, ?, R> collectFor(Supplier<R> supplier) {
         return Collectors.collectingAndThen(Collectors.toList(), data -> {
             R result = supplier.get();
             result.addAll(data);
