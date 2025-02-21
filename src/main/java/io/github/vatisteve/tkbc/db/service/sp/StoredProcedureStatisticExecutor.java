@@ -100,8 +100,7 @@ public class StoredProcedureStatisticExecutor implements StatisticExecutor {
         group.add(first);
         for (int i = 1; i < statistics.size(); i++) {
             Statistic<?> current = statistics.get(i);
-            Statistic<?> previous = statistics.get(i - 1);
-            if (current.getType().equals(previous.getType())) {
+            if (current.joinPreviousGroup()) {
                 group.getStatistics().add(current);
             } else {
                 groups.add(group);
@@ -118,9 +117,9 @@ public class StoredProcedureStatisticExecutor implements StatisticExecutor {
         Class<?> type;
         boolean useMapper;
         List<Statistic<?>> statistics = new ArrayList<>();
-        public StatisticGroup(Statistic<?> statistic) {
-            this.type = statistic.getType();
-            this.useMapper = statistic.useResultMapper() != null;
+        public StatisticGroup(Statistic<?> init) {
+            this.type = init.getType();
+            this.useMapper = init.useResultMapper() != null;
         }
         public void add(Statistic<?> statistic) {
             statistics.add(statistic);

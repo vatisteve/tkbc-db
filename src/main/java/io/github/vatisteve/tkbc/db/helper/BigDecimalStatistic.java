@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Slf4j
 public class BigDecimalStatistic implements Statistic<BigDecimal> {
 
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
 
     @Override
     public BigDecimal getValue() {
