@@ -108,8 +108,8 @@ public class InstantStatisticalRequest implements StatisticalRequest<Instant, In
                 return toEndOfDay(year, month.getValue(), dayOfMonth);
             }
             case OPTION: {
-                if (startDate == null) startDate = Instant.now();
-                return toEndOfDay(startDate);
+                if (endDate == null) endDate = getFrom();
+                return toEndOfDay(endDate);
             }
             default:
                 throw new MissingStatisticDataException(statisticType.getValue());
