@@ -7,6 +7,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Abstraction responsible for executing a statistic query and populating a DTO
+ * with values for its registered statistics.
+ * Implementations may fetch data from different sources (e.g. Stored Procedures).
+ *
  * @author tinhnv - Jan 19 2025
  */
 public interface StatisticExecutor {

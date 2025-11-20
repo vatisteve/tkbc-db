@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 
 /**
+ * Statistic implementation for double precision numbers with BigDecimal-backed accumulation.
  * @author tinhnv - Jan 19 2025
  */
 @Slf4j

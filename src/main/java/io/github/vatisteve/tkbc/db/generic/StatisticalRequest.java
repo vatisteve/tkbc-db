@@ -8,6 +8,9 @@ import java.time.ZoneId;
 import java.time.temporal.Temporal;
 
 /**
+ * Abstraction describing a statistical time request. Depending on {@link io.github.vatisteve.tkbc.db.constants.StatisticType}
+ * implementations provide start/end boundaries in a concrete temporal type and
+ * optional fields such as month, quarter or year.
  * @author tinhnv
  * @since Dec 27, 2023
  */

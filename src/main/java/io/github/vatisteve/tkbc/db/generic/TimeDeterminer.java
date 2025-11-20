@@ -7,6 +7,7 @@ import lombok.Data;
 import java.time.temporal.Temporal;
 
 /**
+ * Simple holder for a time range (from/to) used when resolving statistical periods.
  * @author tinhnv - Jan 19 2025
  */
 @Data

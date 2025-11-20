@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 
 /**
+ * Small contract for enums exposed as label/value pairs in API responses.
  * @author tinhnv
  * @since Dec 27, 2023
  */

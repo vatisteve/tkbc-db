@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.logging.Level;
 
 /**
+ * Generic statistic that holds an arbitrary Object value. No accumulation support.
  * @author tinhnv - Jan 19 2025
  */
 @Data

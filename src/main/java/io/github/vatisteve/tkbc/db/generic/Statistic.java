@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.function.Consumer;
 
 /**
+ * Core contract for a single statistical value.
+ * Implementations encapsulate a typed value, know how to accumulate the next value
+ * (sumNext), and can map database results into themselves.
  * @author tinhnv - Jan 19 2025
  */
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

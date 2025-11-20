@@ -4,6 +4,7 @@ import io.github.vatisteve.tkbc.db.generic.Statistic;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Statistic implementation for long-based counters with accumulation and tolerant parsing.
  * @author tinhnv - Jan 19 2025
  */
 @Slf4j

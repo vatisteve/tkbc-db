@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Statistic implementation for String values. Does not support accumulation.
  * @author tinhnv - Jan 19 2025
  */
 @Data

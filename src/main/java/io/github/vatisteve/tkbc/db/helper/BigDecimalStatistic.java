@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 
+/**
+ * Statistic implementation holding a BigDecimal value with safe accumulation and parsing.
+ */
 @Slf4j
 public class BigDecimalStatistic implements Statistic<BigDecimal> {
 

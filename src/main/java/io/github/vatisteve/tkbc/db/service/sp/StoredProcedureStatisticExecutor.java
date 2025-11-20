@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * StatisticExecutor implementation that reads statistics from a database Stored Procedure.
+ * It registers IN parameters, executes the procedure and maps each result set row into
+ * the registered {@link io.github.vatisteve.tkbc.db.generic.Statistic} instances.
+ * Groups of statistics are split by type and whether a custom result mapper is used.
  * @author tinhnv - Jan 19 2025
  */
 @Slf4j
